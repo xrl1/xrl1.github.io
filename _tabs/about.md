@@ -1,7 +1,6 @@
 ---
 title: About
-date: '2021-12-25T13:44:47+02:00'
-type: page
+icon: fas fa-info-circle
 order: 4
 ---
 Hi hi.
