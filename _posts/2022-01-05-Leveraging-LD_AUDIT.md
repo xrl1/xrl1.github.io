@@ -1,7 +1,6 @@
 ---
 title: 'Leveraging LD_AUDIT to Beat the Traditional Linux Library Preloading Technique - repost'
-date: '2022-01-05T00:49:58+02:00'
-
+date: '2022-01-05T01:22:20+02:00'
 categories: [Linux]
 tags: ['Linux', 'LD_AUDIT', 'LD_PRELOAD', 'evasion', 'library hijacking', 'preloading', 'ld.so']
 ---
@@ -11,7 +10,7 @@ Soon I found out that this API is very handy and powerful - only by setting an e
 
 This was genuinely fascinating for me because up until then, the most commonly used technique was using `LD_PRELOAD` for library preloading, and `LD_AUDIT` was unknown
 
-I managed to both create a rootkit - by hijacking library calls, and also defending against `LD_PRELOAD` - by blocking its loading
+I managed to both create a rootkit - by hijacking library calls, and also defend against `LD_PRELOAD` - by blocking its loading
 
 As those are unheard-of techniques in the Linux cyber-security community, I wrote a blog post about it through my employer, SentinelOne, and you can read all about it there 🙂
 
