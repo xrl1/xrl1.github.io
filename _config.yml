@@ -23,12 +23,8 @@ title: A collection of various tech blabs                          # the main ti
 tagline: Cyber, Linux, ML, and more   # it will display as the sub-title
 
 description: >-                        # used by seo meta and the atom feed
-  A minimal, portfolio, sidebar,
-  bootstrap Jekyll theme with responsive web design
-  and focuses on text presentation.
-
-#  Just a blog about tech stuff I do in my free time and work,
-#    Mostly it is Linux, Cyber Security, ML, bigdata, and
+ Just a blog about tech like Linux kernel, Cyber Security research,
+ Machine Learning, and more.
     
 
 # fill in the protocol & hostname for your site, e.g., 'https://username.github.io'
@@ -59,7 +55,7 @@ google_site_verification: google_meta_tag_verification # change to your verifica
 
 
 google_analytics:
-  id: ''              # fill in your Google Analytics ID
+  id: 'G-EZF1CWYJ1T'              # fill in your Google Analytics ID
   # Google Analytics pageviews report settings
   pv:
     proxy_endpoint:   # fill in the Google Analytics superProxy endpoint of Google App Engine
