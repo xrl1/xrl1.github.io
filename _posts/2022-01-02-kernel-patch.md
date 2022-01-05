@@ -3,6 +3,7 @@ title: 'Committing code to the Linux Kernel &#8211; from a stuck process to a gi
 date: '2022-01-02T23:31:28+02:00'
 categories: [Linux]
 tags: ['Linux', 'kernel', 'binfmt_misc', 'Submit Patch']
+img_path: /assets/img/kernel-patch
 ---
 Earlier in 2021, about March, my own code got into the Linux kernel!  
 Long story short, I found a bug in some binary execution handling component called `binfmt_misc`, got to the bottom of it and fixed it, suggested a patch, and it got applied 🙂
@@ -13,7 +14,7 @@ You can check out the commit here:
 
 As a big Linux enthusiast, you can just imagine how excited I’ve been when I saw this:
 
-![](/assets/image.png)
+![](image.png)
 
 Now I can retire in peace.
 
@@ -39,7 +40,7 @@ echo ":iiiii:E::ii::/proc/sys/fs/binfmt_misc/bla:F" > /proc/sys/fs/binfmt_misc/r
 
 As you can see, the kill signal is sent **successfully**, but no response from bash (from which I executed the ‘echo’ builtin command)
 
-![The immortal bash](/assets/image-1.png)
+![The immortal bash](image-1.png)
 _The immortal bash_
 Alrighttt, some interesting behavior from the OS, don’t you think?
 
@@ -48,7 +49,7 @@ Let’s get digging
 `/proc/sys/fs/binfmt_misc/register` isn’t a standard file in the filesystem.  
 It is actually a mount point (mounted by default by many standard Linux distributions):
 
-![binfmt mount point](/assets/image-2.png)
+![binfmt mount point](image-2.png)
 _binfmt mount point_
 binfmt mount pointThen binfmt\_misc is also.. a filesystem! Or more accurately, a pseudo-filesystem, which implements an interface to communicate with the binfmt kernel component from user-space 🙂
 
