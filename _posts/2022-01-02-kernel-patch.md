@@ -1,5 +1,5 @@
 ---
-title: 'Committing code to the Linux Kernel &#8211; from a stuck process to a git commit'
+title: 'My First Commit in the Linux Kernel - Patching a Bug in the Biggest Open Source Project Ever'
 date: '2022-01-02T23:31:28+02:00'
 categories: [Linux]
 tags: ['Linux', 'kernel', 'binfmt_misc', 'Submit Patch']
@@ -18,7 +18,7 @@ As a big Linux enthusiast, you can just imagine how excited I’ve been when I s
 
 Now I can retire in peace.
 
-The long story:
+## The long story
 
   
 I have been working on an educational Linux challenge, and I was trying to understand better the kernel component `binfmt_misc` for a specific level I had in mind.
@@ -44,7 +44,7 @@ As you can see, the kill signal is sent **successfully**, but no response from b
 _The immortal bash_
 Alrighttt, some interesting behavior from the OS, don’t you think?
 
-Let’s get digging
+## Let’s get digging
 
 `/proc/sys/fs/binfmt_misc/register` isn’t a standard file in the filesystem.  
 It is actually a mount point (mounted by default by many standard Linux distributions):
@@ -60,7 +60,7 @@ From a [documentation ](https://www.kernel.org/doc/html/latest/admin-guide/binfm
 
 In my input to the file, the name, type, offset, magic, and mask are non-important, therefore we will take a look at how the interpreter – “bla”, a non-existent file in the pseudo-filesystem directory, and flags – ‘F’ (fix binary, more on that later) are all together causing the process freeze
 
-Glasses on – reading the kernel code
+## Glasses on – reading the kernel code
 
 The code behind the binfmt\_misc filesystem resides in the kernel source code under “fs/binfmt\_misc.c”. We can manually locate it because “fs” is the folder where most filesystem code resides 😀
 
@@ -164,7 +164,7 @@ In (6), the write lock is taken down, which is too late: the task is now waiting
 
 In short, a write lock is taken on the filesystem root, and with a specific input we cause the same task to try and read in the same place before the lock is taken down, and a deadlock transpires
 
-Gloves on – Patching the code
+## Gloves on – Patching the code
 
 You can see my final patch at the [kernel’s Github](https://github.com/torvalds/linux/commit/e7850f4d844e0acfac7e570af611d89deade3146#diff-bf2e758056c3a407da85096cc54172c2f8ea3d3e252a6692934d494f30cc5198), which is generally very simple – I just moved the “if” block before the code locks the entire kernel, and some small variable definition and freeing accordingly.
 
