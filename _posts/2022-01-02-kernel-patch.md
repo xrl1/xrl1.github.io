@@ -1,5 +1,5 @@
 ---
-title: 'My First Commit in the Linux Kernel - Patching a Bug in the Biggest Open Source Project Ever'
+title: 'My First Commit in the Linux Kernel - Patching a Bug in the binfmt Kernel Component'
 date: '2022-01-02T23:31:28+02:00'
 categories: [Linux]
 tags: ['Linux', 'kernel', 'binfmt_misc', 'Submit Patch']
@@ -23,14 +23,14 @@ Now I can retire in peace.
   
 I have been working on an educational Linux challenge, and I was trying to understand better the kernel component `binfmt_misc` for a specific level I had in mind.
 
-For a brief explanation on the component, here is a it’s [Wikipedia page](https://en.wikipedia.org/wiki/Binfmt_misc):
+For a brief explanation on the component, here is its [Wikipedia page](https://en.wikipedia.org/wiki/Binfmt_misc):
 
 *“* **binfmt\_misc** (*Miscellaneous Binary Format*) is a capability of the [Linux kernel](https://en.wikipedia.org/wiki/Linux_kernel) which allows arbitrary [executable file formats](https://en.wikipedia.org/wiki/Executable_file_format) to be recognized and passed to certain [user space](https://en.wikipedia.org/wiki/User_space) applications, such as [emulators](https://en.wikipedia.org/wiki/Emulator) and [virtual machines](https://en.wikipedia.org/wiki/Virtual_machine).<sup>[\[1\]](https://en.wikipedia.org/wiki/Binfmt_misc#cite_note-1)</sup> It is one of a number of binary format handlers in the kernel that are involved in preparing a user-space program to run.*“*
 
 So this component allows any program to register a custom binary handler, according to some file name extension or file header magic the program defines.  
 Then, upon the execution of the binary, the `binfmt_misc` component will identify the defined program and will pass it the handling of the execution, instead of the more commonly known ELF handler or bash script handler.
 
-Ok, so I was messing around with registering a new binary handler, by echoing some input into a file named `register` in the binfmt filesystem but for some reason.. the process was stuck and didn’t return. I tried to terminate it brutally with “kill -9”, but to my surprise it didn’t respond! A system reboot was necessary to recover this process 😛
+Ok, so I was messing around with registering a new binary handler, by echoing some input into a file named `register` in the binfmt filesystem but for some reason.. the process was stuck and didn’t return. I tried to terminate it brutally with “kill -9”, but to my surprise, it didn’t respond! A system reboot was necessary to recover this process 😛
 
 This is my input in bash:
 
@@ -51,12 +51,12 @@ It is actually a mount point (mounted by default by many standard Linux distribu
 
 ![binfmt mount point](image-2.png)
 _binfmt mount point_
-binfmt mount pointThen binfmt\_misc is also.. a filesystem! Or more accurately, a pseudo-filesystem, which implements an interface to communicate with the binfmt kernel component from user-space 🙂
+Then binfmt\_misc is also.. a filesystem! Or more accurately, a pseudo-filesystem, which implements an interface to communicate with the binfmt kernel component from user-space 🙂
 
-Ok, so what is the `register` file and what is the string I just echoed means?  
-From a [documentation ](https://www.kernel.org/doc/html/latest/admin-guide/binfmt-misc.html)written by kernel.org:
+Ok, so what is the `register` file, and what is the string I just echoed means?  
+From a [documentation](https://www.kernel.org/doc/html/latest/admin-guide/binfmt-misc.html) written by kernel.org:
 
-“To actually register a new binary type, you have to set up a string looking like `:name:type:offset:magic:mask:interpreter:flags` (where you can choose the `:` upon your needs) and echo it to `/proc/sys/fs/binfmt_misc/register`.”
+<p style="text-align: center;"><i>“To actually register a new binary type, you have to set up a string looking like `:name:type:offset:magic:mask:interpreter:flags` (where you can choose the `:` upon your needs) and echo it to `/proc/sys/fs/binfmt_misc/register`.”</i></p>
 
 In my input to the file, the name, type, offset, magic, and mask are non-important, therefore we will take a look at how the interpreter – “bla”, a non-existent file in the pseudo-filesystem directory, and flags – ‘F’ (fix binary, more on that later) are all together causing the process freeze
 
@@ -68,8 +68,8 @@ Then, we can find the `file_operations` struct that is assigned to the file “r
 
 ```c
 static const struct file_operations bm_register_operations = {
-	.write		= bm_register_write,
-	.llseek		= noop_llseek,
+    .write      = bm_register_write,
+    .llseek     = noop_llseek,
 };
 
 ```
@@ -78,7 +78,7 @@ So according to the above struct, each time a “write” operation is called on
 
 After reading the function’s [code](https://github.com/torvalds/linux/blob/2347961b11d4079deace3c81dceed460c08a8fc1/fs/binfmt_misc.c#L644), there is nothing unusual at a first glance.
 
-Now let’s spawn a kernel debuger, and find out what happens inside the kernel (there are a lot of great guide on how to do this, I used kdbg on qemu with buildroot).
+Now let’s set up a development environment and spawn a kernel debugger, and find out what happens inside the kernel (there are a lot of great guides on how to accomplish this, I used kdbg on [qemu with buildroot](https://medium.com/@daeseok.youn/prepare-the-environment-for-developing-linux-kernel-with-qemu-c55e37ba8ade)).
 Then we find the task (thread in the kernel) in which bash is stuck, and inspect it’s backtrace:
 
 ```stacktrace
@@ -168,7 +168,9 @@ In short, a write lock is taken on the filesystem root, and with a specific inpu
 
 You can see my final patch at the [kernel’s Github](https://github.com/torvalds/linux/commit/e7850f4d844e0acfac7e570af611d89deade3146#diff-bf2e758056c3a407da85096cc54172c2f8ea3d3e252a6692934d494f30cc5198), which is generally very simple – I just moved the “if” block before the code locks the entire kernel, and some small variable definition and freeing accordingly.
 
-Then I did the tiresome work to create the patch conforming to the guidelines and sent it as an email to the Linux Kernel Mailing List, and.. nothing.
+After testing the patch on the qemu environment, I was ready to contribute it to the kernel.
+
+Then I did the tiresome work to [create the patch](https://nickdesaulniers.github.io/blog/2017/05/16/submitting-your-first-patch-to-the-linux-kernel-and-responding-to-feedback/) conforming to the [guidelines](https://www.kernel.org/doc/html/v4.17/process/submitting-patches.html) and sent it as an email to the Linux Kernel Mailing List, and.. nothing.
 
 It was the end of December 2020, and I thought that maybe the holidays are causing a delay, but January came by, and my mail wasn’t even acked by anyone.  
 I sent another email, but still nothing…
