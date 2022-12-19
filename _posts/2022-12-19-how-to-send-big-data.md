@@ -90,7 +90,7 @@ In our example, there will be times when we will want to query and make observat
 ### Consistency 
 ❌  ***Problems*** -  file size values have different types, and scan duration values have different units.  
 We want to normalize and keep our data consistent from the sending point - handling it later in the ingestion or during the query can cause mistakes and confusion.  
- ✅  ***Decision breaker***: If it's not essential for the app, prefer using the smallest unit when possible - microseconds instead of seconds as scan duration, and bytes instead of kilobytes for file size. Some reasons are that floating points can cause arithmetic mistakes, and integers will take less space than floats if you use a protocol such as protobuf.  
+ ✅  ***Decision breaker***: If it's not essential for the app, prefer using the smallest unit when possible - microseconds instead of seconds as scan duration, and bytes instead of kilobytes for file size. Some reasons are that floating points can cause arithmetic mistakes, and integers will take less space than floats if you use a protocol such as protobuf.  Only if the smallest unit can expose int overflow, use the smallest unit that doesn't exceed an int size.
 
 ### **Veracity** - or send more, not less
 This one I actually stole from [Big Data five V's](https://www.google.com/search?q=Big%20data%20v%27s), and I refer to an aspect of this concept that can be summarized by a sentence I heard from a co-worker:  
