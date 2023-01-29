@@ -256,4 +256,4 @@ Here is the [jupyter notebook](/assets/country_predictor.ipynb) and the [full co
 Disclosure: to be honest, this is my second conversation for the same task. The first time I talked with ChatGPT, I tried a smaller dataset from the same source (cities500.zip). More dataset corrections were needed, and the first model training code it offered was [LogisticRegression](https://en.wikipedia.org/wiki/Logistic_regression), which resulted in 51% accuracy.  
 As a result, ChatGPT offered to try different "solvers" (which gave ~65% accuracy), and other algorithms, including Random Forest and K-NN, resulting in 93% and 92% accuracy.
 
-\* I really considered addressing ChatGPT as "He" instead of "it" in this post
+\* I really considered addressing ChatGPT as "they" instead of "it" in this post
