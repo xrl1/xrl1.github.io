@@ -158,7 +158,12 @@ Accuracy: 0.9971058010307041
 Amazing! 99.7% accuracy on the first try!
 
 ## Re-evaluation
-The astonishing first-try accuracy metric isn't satisfying enough: remember earlier some errors in the data, and because it is based on cities/other locations, we can say the dataset has some prejudice, and therefore I want to re-evaluate the accuracy with an external and random dataset.
+The astonishing first-try accuracy metric isn't satisfying enough, for a couple of reasons:
+1. The data may be unequally distributed across countries, and [accuracy can be misleading](https://machinelearningmastery.com/failure-of-accuracy-for-imbalanced-class-distributions) in imbalanced data. Take for example a data set with 99% of it in Andora. The model can always locate a given set of coordinates in Andora, and it will be 99% correct.
+2. Earlier we saw some errors in the data.
+3. GeoNames sources are based on cities/other known locations, so the dataset probably has some level of prejudice.
+
+Therefore I want to re-evaluate the accuracy with an external and random dataset.
 
 >![Me](avatar_small.jpg){: .left } 
 >Okay, now let's create another dataset to further evaluate the accuracy of the KNN model. Let's select 10,000 random coordinates on a map and send them to some geolocation REST-API. Please write a python script for the task. Use `tqdm` to display progress and use try-except around fail-prone parts.
